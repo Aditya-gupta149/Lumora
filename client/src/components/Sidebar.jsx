@@ -53,6 +53,7 @@ export default function Sidebar({
     const chat = await createChat(userId);
      console.log(chat);
     setSelectedChat(chat);
+    fetchChats();
 
    
   } catch (err) {
@@ -105,114 +106,179 @@ export default function Sidebar({
 }}
 />
 
-   {chats
-  .filter((chat) => {
-    const currentUser = JSON.parse(localStorage.getItem("user"));
+{search.trim() !== ""
+  ? users
+      .filter((user) => {
+        const currentUser = JSON.parse(localStorage.getItem("user"));
 
-    const otherUser = chat.users.find(
-      (u) => u._id !== currentUser._id
-    );
-
-    const name = chat.isGroupChat
-      ? chat.chatName
-      : otherUser?.name || "";
-
-    return name.toLowerCase().includes(search.toLowerCase());
-  })
-  .map((chat) => {
-  const currentUser = JSON.parse(localStorage.getItem("user"));
-
-  const otherUser = chat.users.find(
-    (u) => u._id !== currentUser._id
-  );
-
-  return (
-    <div
-      key={chat._id}
-      onClick={() => setSelectedChat(chat)}
-      style={{
-        padding: "12px",
-        marginTop: "10px",
-        background:
-          selectedChat?._id === chat._id
-            ? "linear-gradient(90deg,#0ea5e9,#3b82f6)"
-            : "#243b55",
-        borderRadius: "8px",
-        cursor: "pointer",
-        transition: "0.25s ease",
-
-        boxShadow:
-  selectedChat?._id === chat._id
-    ? "0 0 12px rgba(59,130,246,0.6)"
-    : "none",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+        return (
+          user._id !== currentUser._id &&
+          user.name.toLowerCase().includes(search.toLowerCase())
+        );
+      })
+      .map((user) => (
         <div
+          key={user._id}
+          onClick={() => openChat(user._id)}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
+            padding: "12px",
+            marginTop: "10px",
+            background: "#243b55",
+            borderRadius: "8px",
+            cursor: "pointer",
           }}
         >
-          <img
-            src={
-              chat.isGroupChat
-                ? "https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
-                : otherUser?.avatar || "https://i.pravatar.cc/40"
-            }
-            alt="avatar"
+          <div
             style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
-          />
-
-          <div>
-            <h4 style={{ margin: 0 }}>
-              {chat.isGroupChat
-                ? `👥 ${chat.chatName}`
-                : otherUser?.name}
-            </h4>
-
-            {chat.latestMessage && (
-              <p
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <img
+                src={user.avatar || "https://i.pravatar.cc/40"}
+                alt="avatar"
                 style={{
-                  margin: 0,
-                  marginTop: "5px",
-                  color: "#ddd",
-                  fontSize: "13px",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
                 }}
-              >
-                {chat.latestMessage.content}
-              </p>
+              />
+
+              <h4 style={{ margin: 0 }}>{user.name}</h4>
+            </div>
+
+            {onlineUsers.includes(user._id) && (
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "50%",
+                  background: "lime",
+                }}
+              />
             )}
           </div>
         </div>
+      ))
+  : chats
+      .filter((chat) => {
+        const currentUser = JSON.parse(localStorage.getItem("user"));
 
-        {!chat.isGroupChat &&
-          onlineUsers.includes(otherUser?._id) && (
+        const otherUser = chat.users.find(
+          (u) => u._id !== currentUser._id
+        );
+
+        const name = chat.isGroupChat
+          ? chat.chatName
+          : otherUser?.name || "";
+
+        return name
+          .toLowerCase()
+          .includes(search.toLowerCase());
+      })
+      .map((chat) => {
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+
+        const otherUser = chat.users.find(
+          (u) => u._id !== currentUser._id
+        );
+
+        return (
+          <div
+            key={chat._id}
+            onClick={() => setSelectedChat(chat)}
+            style={{
+              padding: "12px",
+              marginTop: "10px",
+              background:
+                selectedChat?._id === chat._id
+                  ? "linear-gradient(90deg,#0ea5e9,#3b82f6)"
+                  : "#243b55",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "0.25s ease",
+              boxShadow:
+                selectedChat?._id === chat._id
+                  ? "0 0 12px rgba(59,130,246,0.6)"
+                  : "none",
+            }}
+          >
             <div
               style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "lime",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
-            />
-          )}
-      </div>
-    </div>
-  );
-})}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <img
+                  src={
+                    chat.isGroupChat
+                      ? "https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
+                      : otherUser?.avatar ||
+                        "https://i.pravatar.cc/40"
+                  }
+                  alt="avatar"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
+
+                <div>
+                  <h4 style={{ margin: 0 }}>
+                    {chat.isGroupChat
+                      ? `👥 ${chat.chatName}`
+                      : otherUser?.name}
+                  </h4>
+
+                  {chat.latestMessage && (
+                    <p
+                      style={{
+                        margin: 0,
+                        marginTop: "5px",
+                        color: "#ddd",
+                        fontSize: "13px",
+                      }}
+                    >
+                      {chat.latestMessage.content}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {!chat.isGroupChat &&
+                onlineUsers.includes(otherUser?._id) && (
+                  <div
+                    style={{
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      background: "lime",
+                    }}
+                  />
+                )}
+            </div>
+          </div>
+        );
+      })}
 
 {showGroup && (
   <div

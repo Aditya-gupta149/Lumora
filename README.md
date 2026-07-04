@@ -334,7 +334,7 @@ Feel free to fork this repository and submit a pull request.
 **Aditya Gupta**
 
 - GitHub: https://github.com/Aditya-gupta149
-- LinkedIn: *Add your LinkedIn profile*
+- LinkedIn: https://www.linkedin.com/in/aditya-gupta-312830280?utm_source=share_via&utm_content=profile&utm_medium=member_android
 
 ---
 

@@ -3,6 +3,7 @@ import { getUsers } from "../services/api";
 import { createChat , getChats } from "../services/api";
 import socket from "../socket";
 import GroupChat from "./GroupChat";
+import { decryptMessage } from "../utils/encryption";
 
 export default function Sidebar({
   selectedChat,
@@ -258,7 +259,7 @@ export default function Sidebar({
                         fontSize: "13px",
                       }}
                     >
-                      {chat.latestMessage.content}
+                     {decryptMessage(chat.latestMessage.content)}
                     </p>
                   )}
                 </div>
